@@ -106,13 +106,9 @@
      */
     if ([menuItem action] == @selector(toggleFullScreen:)) {
         SDL_Window *window = [self findSDLWindow];
-        if (window == NULL) {
+        if (window == NULL || window->flags & SDL_WINDOW_FULLSCREEN || window->flags & SDL_WINDOW_UTILITY || (window->flags & SDL_WINDOW_RESIZABLE) == 0) {
             return NO;
-        } else if (window->flags & SDL_WINDOW_FULLSCREEN) {
-            return NO;
-        } else if ((window->flags & SDL_WINDOW_RESIZABLE) == 0) {
-            return NO;
-        }
+        } 
     }
     return [super validateMenuItem:menuItem];
 }
