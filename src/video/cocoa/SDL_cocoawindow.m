@@ -120,7 +120,7 @@
 - (BOOL)canBecomeKeyWindow
 {
     SDL_Window *window = [self findSDLWindow];
-    if (window && !(window->flags & (SDL_WINDOW_TOOLTIP | SDL_WINDOW_NOT_FOCUSABLE))) {
+    if (window && !(window->flags & (SDL_WINDOW_TOOLTIP | SDL_WINDOW_NOT_FOCUSABLE))){
         return YES;
     } else {
         return NO;
@@ -130,7 +130,7 @@
 - (BOOL)canBecomeMainWindow
 {
     SDL_Window *window = [self findSDLWindow];
-    if (window && !SDL_WINDOW_IS_POPUP(window)) {
+    if (window && !SDL_WINDOW_IS_POPUP(window) && !(window->flags & SDL_WINDOW_UTILITY)) {
         return YES;
     } else {
         return NO;
@@ -1173,10 +1173,12 @@ static NSCursor *Cocoa_GetDesiredCursor(void)
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
     SDL_Window *window = _data.window;
-
+    //Sawbe: The following line was preventing parent window from ever receiving focus...
+    //-----------------------------------------------------------------------------------
     // We're going to get keyboard events, since we're key.
     // This needs to be done before restoring the relative mouse mode.
-    Cocoa_SetKeyboardFocus(_data.keyboard_focus ? _data.keyboard_focus : window);
+    //Cocoa_SetKeyboardFocus(_data.keyboard_focus ? _data.keyboard_focus : window);
+    Cocoa_SetKeyboardFocus(window);
 
     // If we just gained focus we need the updated mouse position
     if (!(window->flags & SDL_WINDOW_MOUSE_RELATIVE_MODE)) {
@@ -2830,9 +2832,11 @@ SDL_FullscreenResult Cocoa_SetWindowFullscreen(SDL_VideoDevice *_this, SDL_Windo
             [data.listener resumeVisibleObservation];
         }
 
+        //Sawbe: this was causing a NULL pointer crash when creating window...
+        //--------------------------------------------------------------------
         // Update the safe area insets
         // The view never seems to reflect the safe area, so we'll use the screen instead
-        if (@available(macOS 12.0, *)) {
+        /*if (@available(macOS 12.0, *)) {
             if (fullscreen) {
                 NSScreen *screen = [nswindow screen];
 
@@ -2844,7 +2848,7 @@ SDL_FullscreenResult Cocoa_SetWindowFullscreen(SDL_VideoDevice *_this, SDL_Windo
             } else {
                 SDL_SetWindowSafeAreaInsets(data.window, 0, 0, 0, 0);
             }
-        }
+        }*/
 
         /* When coming out of fullscreen to minimize, this needs to happen after the window
          * is made key again, or it won't minimize on 15.0 (Sequoia).
