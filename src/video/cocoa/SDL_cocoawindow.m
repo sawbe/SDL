@@ -1201,7 +1201,7 @@ static NSCursor *Cocoa_GetDesiredCursor(void)
     Cocoa_CheckClipboardUpdate(_data.videodata);
 
     if (isFullscreenSpace && !window->fullscreen_exclusive) {
-        [NSMenu setMenuBarVisible:NO];
+        [NSMenu setMenuBarVisible:YES];
     }
     {
         const unsigned int newflags = [NSEvent modifierFlags] & NSEventModifierFlagCapsLock;
