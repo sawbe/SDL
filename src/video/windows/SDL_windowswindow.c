@@ -693,10 +693,11 @@ bool WIN_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_Properties
         int x, y;
         int w, h;
 
-        if (window->flags & SDL_WINDOW_UTILITY) {
-            parent = CreateWindow(SDL_Appname, TEXT(""), STYLE_BASIC, 0, 0, 32, 32, NULL, NULL, SDL_Instance, NULL);
-        } else if (window->parent) {
+        if (window->parent) {
             parent = window->parent->internal->hwnd;
+        }
+        else if (window->flags & SDL_WINDOW_UTILITY) {
+            parent = CreateWindow(SDL_Appname, TEXT(""), STYLE_BASIC, 0, 0, 32, 32, NULL, NULL, SDL_Instance, NULL);
         }
 
         style |= GetWindowStyle(window);
